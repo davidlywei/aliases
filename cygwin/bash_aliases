@@ -27,12 +27,12 @@
 	#--- Directory Changers
 		function cdd
 		{
-			cd /cygdrive/c/Users/david/Desktop/$1;
+			cd /cygdrive/c/Users/Order/Desktop/$1;
 		}
 		
 		function cdr
 		{
-			cd ~/resources/$1;
+			cd ~/repo/$1;
 		}
 		
 		function cdc
@@ -40,14 +40,14 @@
 			cd /cygdrive/c/$1;
 		}
 		
-		function cdg
+		function cdn
 		{
-			cd /cygdrive/c/Users/david/Documents/backup/git/$1;
+			cd /cygdrive/c/Users/Order/Downloads;
 		}
-		
+
 		function cdw
 		{
-			cd /cygdrive/c/Users/david/Documents/$1;
+			cd /cygdrive/c/Users/Order/Documents/$1;
 		}
 		
 		function cde
@@ -104,13 +104,16 @@
 	#--- Backup
 		function cdb
 		{
-			cd /cygdrive/c/Users/david/Documents/backup/$1;
+			cd /cygdrive/c/Users/Order/repo/$1;
 		}
 		
 		alias bb='cp ~/.bash_aliases ~/.bash_aliases.bak; echo "Backed up ~/.bash_aliases"'
 		alias bar='perl ~/.bar.pl'
 		
-	
+
+	#--- Android
+		alias flash-system="~/android/flash-system.sh"
+
 	#--- System Tools
 		function gcomp
 		{
@@ -122,6 +125,23 @@
 			gcc -g -Wall -Wextra -o $1 $1.c;
 		}
 
+		function addpath
+		{
+			currDir=`pwd`
+			echo "" >> ~/.bash_paths
+			echo "# --- " >> ~/.bash_paths
+			echo "export PATH=\$PATH:$currDir" >> ~/.bash_paths
+			vi ~/.bash_paths	
+		}
+		
+		function addvar
+		{
+			echo "" >> ~/.bash_vars
+			echo "# --- " >> ~/.bash_vars
+			echo "export =" >> ~/.bash_vars
+			vi ~/.bash_vars
+		}
+
 		alias makemake='makemake.py'
 		alias p34='/cygdrive/c/Python34/python.exe'
 		alias jc='javac *.java'
@@ -129,14 +149,39 @@
 		alias dug='du -cha | grep "[0-9]G[ 	]"'
 		alias sb='source ~/.bash_aliases; echo "Resourced ~/.bash_aliases"'
 		alias untar='tar xvfz'
-		alias open='explorer .'
+		alias open='explorer'
 		alias term='/cygdrive/c/cygwin64/bin/mintty.exe -i /Cygwin-Terminal.ico - & >> /dev/null'
 		alias add='/cygdrive/c/cygwin64/setup-x86_64.exe'
 
 	#--- New Aliases / functions
 		alias palias='~/.ba.sh 1'
 		alias fn='~/.ba.sh 0'
-	
+
+	#--- Hue commands
+		function bedon
+		{
+			if [[ $1 -gt 0 ]]; then
+				curl -X PUT -H "Content-type: application/json" http://$HUESERVER/api/$HUEKEY/groups/1/action -d '{ "on": true, "bri": '$1',"effect": "none"}' &> /dev/null
+			else
+				curl -X PUT -H "Content-type: application/json" http://$HUESERVER/api/$HUEKEY/groups/1/action -d '{ "on": true, "bri": 254, "effect": "none"}' &> /dev/null
+			fi
+		}		
+		
+		function bedoff
+		{
+			curl -X PUT -H "Content-type: application/json" http://$HUESERVER/api/$HUEKEY/groups/1/action -d '{ "on": false, "effect": "none"}' &> /dev/null
+		}		
+
+		function kiton
+		{
+			curl -X PUT -H "Content-type: application/json" http://$HUESERVER/api/$HUEKEY/groups/2/action -d '{ "on": true, "effect": "none"}' &> /dev/null
+		}	
+
+		function kitoff
+		{
+			curl -X PUT -H "Content-type: application/json" http://$HUESERVER/api/$HUEKEY/groups/2/action -d '{ "on": false, "effect": "none"}' &> /dev/null
+		}		
+		
 	#---Unorganized Functions---#
 		
 	#---End of Functions---#
@@ -151,6 +196,11 @@
 	# Includes other paths that are relevant to the operating system.
 	if [ -f ~/.bash_paths ]; then
 		. ~/.bash_paths
+	fi
+
+	# Includes other environment variables relevant to the operating system
+	if [ -f ~/.bash_vars ]; then
+		. ~/.bash_vars
 	fi
 
 	# Adds the Time to the command line prompt
